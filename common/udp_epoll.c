@@ -24,13 +24,11 @@ int udp_connect(struct sockaddr_in *server) {
     int sockfd = socket_create_udp(port);
 
     if (sockfd < 0) {
-        perror("udp_connect_socket_create()");
-        exit(1);
+        return -1;
     }
 
     if (connect(sockfd, (struct sockaddr *)&server, sizeof(*server)) < 0) {
-        perror("udp_connect_connect()");
-        exit(1);
+        return -1;
     }
 
     return sockfd;
