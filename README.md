@@ -5,16 +5,16 @@
 
 ## directory description
 
-|---client
-|   |---client.c
-|   |---football.conf
-|---common
-|   |---common.c
-|   |---common.h
-|   |---head.h
-|   |---datatype.h
-|   |---udp_epoll.c
-|   |---udp_epoll.h
-|---server
-    |---footballd.conf
-    |---server.c
+#### |---client
+#### |   |---client.c
+#### |   |---football.conf
+#### |---common
+#### |   |---common.c
+#### |   |---common.h
+#### |   |---head.h
+#### |   |---datatype.h
+#### |   |---udp_epoll.c
+#### |   |---udp_epoll.h
+#### |---server
+####     |---footballd.conf
+####     |---server.c
