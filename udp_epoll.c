@@ -30,7 +30,6 @@ void del_event(int epollfd, int fd) {
     epoll_ctf(epollfd, EPOLL_CTL_DEL, fd, NULL);
 }
 
-extern int port;
 int udp_connect(struct sockaddr_in*client){
     int sockfd;
     if((sockfd=socket_create_udp(port))<0){
