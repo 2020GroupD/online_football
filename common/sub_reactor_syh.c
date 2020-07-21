@@ -1,10 +1,10 @@
 #include "head.h"
-#define NWORKER 5
+#define NTHREAD 5
 #define MAX 20
 void *sub_reactor(void *arg) {
 	struct task_queue *taskQueue = (struct task_queue *)arg;
-	pthread_t *tid = (pthread_t *)calloc(NWORKER, sizeof(pthread_t));
-	for (int i = 0; i < NWORKER; i++) {
+	pthread_t *tid = (pthread_t *)calloc(NTHREAD, sizeof(pthread_t));
+	for (int i = 0; i < NTHREAD; i++) {
 		pthread_create(&tid[i], NULL, thread_run, (void *)taskQueue);
 	}
 	struct epoll_event ev, events[MAX];
@@ -22,6 +22,6 @@ void *sub_reactor(void *arg) {
 			}
 		}
 	}
-	return ;
+	return NULL;
 
 }
