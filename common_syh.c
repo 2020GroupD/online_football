@@ -35,4 +35,24 @@ int socket_udp() {
 	return sockfd;
 }
 //
+extern char ans[255]
+char*get_conf_value(const char *path, const char *key){
+    FILE*fp=NULL;
+    fp=fopen(path,"r");
+    char line[255]={0};
+    while(fgets(line,255,fp)){
+        if(strstr(line,key)!=NULL){
+            int i=strlen(key);
+            while(line[i]==' ')i++;
+            if(line[i]=='='){
+                strncpy(ans,line+i+1,strlen(line+i+1));
+                return ans;
+            }
+            else{
+                continue;
+            }
 
+        }
+    }
+    return NULL;
+}
