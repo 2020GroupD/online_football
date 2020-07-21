@@ -8,7 +8,7 @@
 
 void add_event_ptr(int epollfd, int fd, int events, struct User *user) {
     struct epoll_event ev;
-    //è°ƒç”¨epoll_ctfå°†fdåŠ å…¥åˆ°epollfdä¸­
+    //µ÷ÓÃepoll_ctf½«fd¼ÓÈëµ½epollfdÖĞ
     ev.data.ptr = user;
     ev.data.fd = fd;
     ev.events = EPOLLIN | EPOLLET;
@@ -24,7 +24,25 @@ void add_event_ptr(int epollfd, int fd, int events, struct User *user) {
 
 
 
+
 void del_event(int epollfd, int fd) {
     close(fd);
     epoll_ctf(epollfd, EPOLL_CTL_DEL, fd, NULL);
+}
+
+extern int port;
+int udp_connect(struct sockaddr_in*client){
+    int sockfd;
+    if((sockfd=socket_create_udp(port))<0){
+        perror("socket_create_udp()");
+        exit(1);
+    
+    }
+   if(connect(sockfd,(struct sockaddr*)&client,sizeof(client))==-1){
+        perror("connect()");
+        exit(1);
+
+   }
+   return sockfd;
+
 }
