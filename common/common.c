@@ -1,9 +1,12 @@
-#include "common.h"
+#include "head.h"
+
+char ans[512] = {0};
 
 char *get_conf_value(const char *path, const char *key) {
     FILE *fp = NULL;
     fp = fopen(path, "r");
     char line[255] = {0};
+    bzero(&ans, sizeof(ans));
 
     while (fgets(line, 255, fp)) {
         if (strstr(line, key) != NULL) {
@@ -38,7 +41,7 @@ int socket_create_udp(int port) {
 	bzero(&server, sizeof(server));
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	server.port = htons(port);
+	server.sin_port = htons(port);
 
 	if (bind(listener, (struct sockaddr *)&server, sizeof(server)) < 0) {
 		return -1;

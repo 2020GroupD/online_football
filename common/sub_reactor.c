@@ -1,12 +1,13 @@
 #include "head.h"
-#define NTHREAD 5
-#define MAX 20
+
 void *sub_reactor(void *arg) {
 	struct task_queue *taskQueue = (struct task_queue *)arg;
 	pthread_t *tid = (pthread_t *)calloc(NTHREAD, sizeof(pthread_t));
+
 	for (int i = 0; i < NTHREAD; i++) {
 		pthread_create(&tid[i], NULL, thread_run, (void *)taskQueue);
 	}
+
 	struct epoll_event ev, events[MAX];
 	while (1) {
 		int nfds = epoll_wait(taskQueue->epollfd, events, MAX, -1);

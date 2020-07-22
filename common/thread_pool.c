@@ -1,9 +1,11 @@
 #include "head.h"
-//#include "thread_pool_syh.h"
 
 void do_with(struct User *user) {
-	//dosomething
-	//
+    char buff[512] = {0};
+    recv(user->fd, buff, sizeof(buff), 0);
+    printf("recv : %s\n", buff);
+    send(user->fd, buff, strlen(buff),0);
+    bzero(buff, sizeof(buff));
 }
 
 void task_queue_init(struct task_queue *taskQueue, int size, int epollfd) {
@@ -25,6 +27,7 @@ void task_queue_push(struct task_queue *taskQueue, struct User *user) {
 	}
 	taskQueue->team[taskQueue->tail] = user;
 	taskQueue->total++;
+    //循环队列
 	if (++taskQueue->tail == taskQueue->size) {
 		taskQueue->tail = 0;
 	}
@@ -36,9 +39,11 @@ void task_queue_push(struct task_queue *taskQueue, struct User *user) {
 struct User *task_queue_pop(struct task_queue *taskQueue) {
 	pthread_mutex_lock(&taskQueue->mutex);
 	while (taskQueue->tail == taskQueue->head) {
+        //解锁之后阻塞，否则会发生死锁
 		pthread_cond_wait(&taskQueue->cond, &taskQueue->mutex);
 	}
 	struct User *user = taskQueue->team[taskQueue->head];
+    //循环队列
 	if (++taskQueue->head == taskQueue->size) {
 		taskQueue->head = 0;
 	}

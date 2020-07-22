@@ -36,8 +36,23 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/shm.h>
+#include <ncurses.h>
 
-//#include "thread_pool.h"//syh
+#include "common.h"
+#include "datatype.h"
+#include "game_ui.h"
+#include "sub_reactor.h"
+#include "udp_epoll.h"
+#include "thread_pool.h"
+#include "color.h"
 
+#define MAX         20
+#define NTHREAD     5
+
+#ifdef _D
+#define DBG(fmt, args...) printf(fmt, ##args)
+#else
+#define DBG(fmt, args...) 
+#endif
 
 #endif
