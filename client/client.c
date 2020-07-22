@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 
     while (1) {
         char buff[512] = {0};
-        scanf("%[^\n]s", buff);
+        scanf(NONE"%[^\n]s", buff);
         getchar();
         send(sockfd, buff, strlen(buff), 0);
         recv(sockfd, buff, sizeof(buff), 0);
