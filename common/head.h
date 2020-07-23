@@ -36,8 +36,17 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/shm.h>
+#include <ncurses.h>
+#include <curses.h>
 
-//#include "thread_pool.h"//syh
+#include "thread_pool_syh.h"
+#include "common.h"
+#include "datatype.h"
+#include "udp_epoll_syh.h"
+#include "sub_reactor_syh.h"
+#include "color.h"
+#include "game_ui.h"
 
+#define MAX 20
 
 #endif

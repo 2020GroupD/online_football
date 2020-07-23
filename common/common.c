@@ -1,4 +1,4 @@
-#include "common.h"
+#include "head.h"
 
 char *get_conf_value(const char *path, const char *key) {
     FILE *fp = NULL;
@@ -38,7 +38,7 @@ int socket_create_udp(int port) {
 	bzero(&server, sizeof(server));
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	server.port = htons(port);
+	server.sin_port = htons(port);
 
 	if (bind(listener, (struct sockaddr *)&server, sizeof(server)) < 0) {
 		return -1;

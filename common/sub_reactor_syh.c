@@ -1,6 +1,5 @@
 #include "head.h"
 #define NTHREAD 5
-#define MAX 20
 void *sub_reactor(void *arg) {
 	struct task_queue *taskQueue = (struct task_queue *)arg;
 	pthread_t *tid = (pthread_t *)calloc(NTHREAD, sizeof(pthread_t));
