@@ -7,7 +7,7 @@
 *
 ================================================================*/
 #include "server_send_all.h"
-
+#include "head.h"
 extern struct User *rteam, *bteam;
 
 void send_team(struct User *team, struct FootBallMsg *msg){
