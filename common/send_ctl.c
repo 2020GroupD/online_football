@@ -7,7 +7,7 @@
 *
 ================================================================*/
 #include "send_ctl.h"
-
+#include "head.h"
 extern int sockfd;
 extern struct FootBallMsg ctl_msg; //也是个全局变量
 
