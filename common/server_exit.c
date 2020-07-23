@@ -7,6 +7,7 @@
 *
 ================================================================*/
 #include "server_exit.h"
+#include "head.h"
 extern struct User *rteam, *bteam;
 
 void server_exit(int signum) {
