@@ -12,6 +12,7 @@ int team = -1;
 char *conf = "./football_qzh.conf";
 //char *conf = "./football_syh.conf";
 int sockfd = -1;
+char ans[512];
 
 int main(int argc, char **argv) {
     int opt;
