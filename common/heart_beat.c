@@ -7,6 +7,7 @@
 *
 ================================================================*/
 #include "heart_beat.h"
+#include "head.h"
 #define HEART_TIME 1000
 extern struct User *rteam, *bteam;
 extern int repollfd, bepollfd;
