@@ -2,9 +2,14 @@
 int port;
 char *conf = "./footballd.conf";
 int bepollfd, repollfd;
+char ans[512];
 struct User *rteam, *bteam;
 pthread_mutex_t bmutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t rmutex = PTHREAD_MUTEX_INITIALIZER;
+struct Map court;
+struct Bpoint ball;  //球的位置
+struct BallStatus ball_status;
+WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;
 
 int main(int argc, char **argv) {
     int opt, listener, epollfd;
@@ -24,6 +29,12 @@ int main(int argc, char **argv) {
     //判断一配置文件合法性,如果不做合法性判断，在下面一行代码中，会很容易出现段错误，为什么呢？
     
     if (!port) port = atoi(get_conf_value(conf, "PORT"));
+    court.width=atoi(get_conf_value(conf,"COLS"));
+    court.height=atoi(get_conf_value(conf,"LINES"));
+    court.start.x=3;
+    court.start.y=2;
+    
+    initfootball();
         
     if ((listener = socket_create_udp(port)) < 0) {
         perror("socket_create_udp()");
