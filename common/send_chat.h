@@ -8,6 +8,5 @@
 ================================================================*/
 #ifndef _SEND_CHAT_H
 #define _SEND_CHAT_H
-#include "head.h"
 void send_chat();
 #endif //SEND_CHAT_H
