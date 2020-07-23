@@ -7,7 +7,7 @@
 *
 ================================================================*/
 #include "send_chat.h"
-
+#include "head.h"
 extern int sockfd;
 extern WINDOW *Write;
 extern struct FootBallMsg chat_msg;
