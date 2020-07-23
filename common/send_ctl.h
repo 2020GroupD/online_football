@@ -10,4 +10,5 @@
 #define _SEND_CTL_H
 
 void send_ctl();
+
 #endif //SEND_CTL_H
