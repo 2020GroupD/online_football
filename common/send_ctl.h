@@ -8,6 +8,6 @@
 ================================================================*/
 #ifndef _SEND_CTL_H
 #define _SEND_CTL_H
-#include "head.h"
+
 void send_ctl();
 #endif //SEND_CTL_H
