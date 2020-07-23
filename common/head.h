@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <pthread.h>
+#include <ncurses.h>
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -36,8 +37,16 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/shm.h>
-
+#include "datatype.h"
+#include "udp_epoll.h"
+#include "thread_pool_syh.h"
+#include "common.h"
+#include "sub_reactor.h"
 //#include "thread_pool.h"//syh
+#include "color.h"
+#include "game_ui.h"
 
+#define MAX 20
+#define NWORKER 5
 
 #endif

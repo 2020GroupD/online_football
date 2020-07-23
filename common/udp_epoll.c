@@ -16,9 +16,9 @@ extern int bepollfd, repollfd;
 void add_event_ptr(int epollfd, int fd, int events, struct User *user) {
     struct epoll_event ev;
     //调用epoll_ctf将fd加入到epollfd中
-    ev.data.ptr = user;
-    ev.data.fd = fd;
-    ev.events = EPOLLIN | EPOLLET;
+    ev.data.ptr = (void*)user;
+   // ev.data.fd = fd;
+    ev.events = events;
     if (epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev) < 0) {
         perror("epoll_ctl()");
         return ;
@@ -26,15 +26,26 @@ void add_event_ptr(int epollfd, int fd, int events, struct User *user) {
     return ;
 }
 
+int check_online(struct LogRequest *request){
+     for (int i = 0; i < MAX; i++) {
+         //判断两个队伍中是否有同名用户，有的话返回1
+		if(rteam[i].online == 1 && !strcmp(rteam[i].name, request->name)) return 1;
+		if(bteam[i].online == 1 && !strcmp(bteam[i].name, request->name)) return 1;
+    }
+    return 0;
+}
+
 
 int udp_connect(struct sockaddr_in *server) {
     int sockfd = socket_create_udp(port);
 
     if (sockfd < 0) {
+        perror("socket_create_udp");
         return -1;
     }
 
-    if (connect(sockfd, (struct sockaddr *)&server, sizeof(*server)) < 0) {
+    if (connect(sockfd, (struct sockaddr *)server, sizeof(struct sockaddr)) < 0) {
+        perror("connect()");
         return -1;
     }
 
@@ -48,45 +59,57 @@ int udp_accept(int fd, struct User *user) {
     struct LogResponse response;
     socklen_t len = sizeof(client);
     
-    bzero(client, sizoef(client));
-    bzero(request, sizeof(request));
-    bzero(response, sizeof(response));
+    bzero(&client, sizeof(client));
+    bzero(&request, sizeof(request));
+    bzero(&response, sizeof(response));
 
     ret = recvfrom(fd, (void *)&request, sizeof(request), 0, (struct sockaddr *)&client, &len);
     
-    if (ret != sizeof(response)) {
+    if (ret != sizeof(request)) {
         response.type = 1;
         char *msg = "Login failed with Data errors";
-        sprintf(response.msg, msg);
-        send(fd, response, sizeof(response), 0);
+        strcpy(response.msg, msg);
+        sendto(fd, (void*)&response, sizeof(response), 0, (struct sockaddr*)&client, len);
+        //puts(">>>>");
         return -1;
     }
-    
+	if(check_online(&request)) {
+		response.type = 1;
+        strcpy(response.msg, "You have already login!");
+        sendto(fd, (void*)&response, sizeof(response), 0, (struct sockaddr*)&client, len);
+        return -1;
+			
+	}
+    printf("client:%s\n",inet_ntoa(client.sin_addr)); 
+   // client.sin_family=AF_INET;
     new_fd = udp_connect(&client);
+    user->fd=new_fd;
+    printf("new_fd:%d\n",new_fd);
     if (new_fd < 0) {
+            
         return -1;
     }
     
-    sprintf(user->name, request.name);
-    sprintf(user->msg, request.msg);
+    strcpy(user->name, request.name);
     user->team = request.team;
     
     char *msg = "Login Success, Enjoy Yourself";
-    send(fd, msg, strlen(msg), 0);
-
+    strcpy(response.msg,msg);
+    send(new_fd,(void*)&response, sizeof(response), 0);
+    
     return new_fd;
 }
 
 void del_event(int epollfd, int fd) {
-    close(fd);
-    epoll_ctf(epollfd, EPOLL_CTL_DEL, fd, NULL);
+  //  close(fd);
+    epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, NULL);
 }
 
 
 //syh 2020/7/21
 
 int find_sub(struct User *team) {
-	for (int i = 0; i < MAX; i++) {
+	for (int i = 0; i < MMAX; i++) {
 		if (!team[i].online) return i;
 	}
 	return -1;
