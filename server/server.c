@@ -15,7 +15,7 @@ pthread_mutex_t bmutex = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char **argv) {
     int opt, listener, epollfd;
-    pthread_t red_t, blue_ti, heart_t;
+    pthread_t red_t, blue_t, heart_t;
     while ((opt = getopt(argc, argv, "p:")) != -1) {
         switch (opt) {
             case 'p':
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 
     pthread_create(&red_t, NULL, sub_reactor, (void*)&redQueue);
     pthread_create(&blue_t, NULL, sub_reactor, (void*)&blueQueue);
-    pthread_create(&heart_t,NULL,hear_beat,NULL);
+//    pthread_create(&heart_t,NULL,hear_beat,NULL);
 
 //    printf("ppp\n");
     struct epoll_event ev, events[MAX];
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
     
-    signal(SIGALRM, re_draw);
+  /*  signal(SIGALRM, re_draw);
     struct itimeval itimer;
     itimer.it_interval.tv_sec = 0;
     itimer.it_interval.tv_usec = 100000;
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
     itimer.it_value.tv_usec = 0;
 
     setitimer(ITIMER_REAL, &itimer, NULL);
-
+*/
     while (1) {
     //    printf("wait before\n");
         int nfds = epoll_wait(epollfd, events, MAX, -1);
