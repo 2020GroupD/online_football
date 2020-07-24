@@ -73,7 +73,7 @@ struct Score {
 #define ACTION_KICK     0x01
 #define ACTION_CARRY    0x02
 #define ACTION_STOP     0x04
-#define ACTION_DFL
+#define ACTION_DFL      0x08
 struct Ctl {
     int action;
     int dirx;

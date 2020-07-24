@@ -6,21 +6,45 @@
  ************************************************************************/
 #include "head.h"
 
-int server_port = 0;
+int port = 0;
 char server_ip[20] = {0};
 int team = -1;
-char *conf = "./football_qzh.conf";
+char *conf = "./football.conf";
 //char *conf = "./football_syh.conf";
 int sockfd = -1;
 char ans[512];
+struct Map court;
+struct Bpoint ball;
+struct FootBallMsg chat_msg;
+struct FootBallMsg ctl_msg;
+int show_name = 0;
+char data_stream[20] = {0};
+WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;
+int messsage_num = 0;
+
+void logout(int signum){
+    struct FootBallMsg msg;
+    msg.type = FT_FIN;
+    send(sockfd, (void*)&msg, sizeof(msg), 0);
+    close(sockfd);
+    DBG(RED"Bye!!\n"NONE);
+//    endwin();
+ //   exit(0);
+}
+
 
 int main(int argc, char **argv) {
+    setlocale(LC_ALL,"");
     int opt;
     struct LogRequest request;
     struct LogResponse response;
-    
+    pthread_t recv_t, draw_t;
     bzero(&request, sizeof(request));
     bzero(&response, sizeof(response));
+    bzero(&chat_msg, sizeof(chat_msg));
+    bzero(&ctl_msg, sizeof(ctl_msg));
+    chat_msg.type = FT_WALL;
+    ctl_msg.type = FT_CTL;
     while ((opt = getopt(argc, argv, "h:p:t:m:n:")) != -1) {
         switch (opt) {
             case 't':
@@ -30,7 +54,7 @@ int main(int argc, char **argv) {
                 strcpy(server_ip, optarg);
                 break;
             case 'p':
-                server_port = atoi(optarg);
+                port = atoi(optarg);
                 break;
             case 'm':
                 strcpy(request.msg, optarg);
@@ -43,17 +67,26 @@ int main(int argc, char **argv) {
                 exit(1);
         }   
     }
+    court.width = atoi(get_conf_value(conf, "COLS"));
+    court.height = atoi(get_conf_value(conf, "LINES"));
+    court.start.x = 3;
+    court.start.y = 3;
 
     
-    if (!server_port) server_port = atoi(get_conf_value(conf, "SERVERPORT"));
+    if (!port) port = atoi(get_conf_value(conf, "SERVERPORT"));
     if (!request.team) request.team = atoi(get_conf_value(conf, "TEAM"));
     if (!strlen(server_ip)) strcpy(server_ip, get_conf_value(conf, "SERVERIP"));
     if (!strlen(request.name)) strcpy(request.name, get_conf_value(conf, "NAME"));
     if (!strlen(request.msg)) strcpy(request.msg, get_conf_value(conf, "LOGMSG"));
     
+    DBG("<"GREEN"conf ifno"NONE"> : SERVER.IP=%s, PORT=%s, TEAM=%S, NAME=%S",server_ip, server_port, request.team, request.name);
+   
+    signal(SIGINT, logout);
+
+
     printf(L_YELLOW"=============== Welcome ==============\n"NONE);
     printf("ip: %s", server_ip);
-    printf("port : %d\n", server_port);
+    printf("port : %d\n", port);
     printf("Dear %s", request.name);
     printf("your team is ");
     request.team ? printf(L_BLUE"blue!\n"NONE) : printf(L_RED"red!\n"NONE);
@@ -61,7 +94,7 @@ int main(int argc, char **argv) {
     
     struct sockaddr_in server;
     server.sin_family = AF_INET;
-    server.sin_port = htons(server_port);
+    server.sin_port = htons(port);
     server.sin_addr.s_addr = inet_addr(server_ip);
                 
     socklen_t len = sizeof(server);
@@ -86,25 +119,105 @@ int main(int argc, char **argv) {
     } else if (retval){
         int ret = recvfrom(sockfd, (void *)&response, sizeof(response), 0, (struct sockaddr *)&server, &len);
         if (ret != sizeof(response) || response.type) {
-            printf("The Game Server refused your login.\n\tThis May be helpful:%s\n", response.msg);
+            DBG(RED"The Game Server refused your login.\n\tThis May be helpful:%s\n", response.msg);
             exit(1);                                                  
         }                                     
     } else {
-        printf("The Game Server is out of service!.\n");
+        DBG(RED"The Game Server is out of service!.\n");
         exit(1);                                                             
     }
     
-    printf("Server : %s\n", response.msg);
+    DBG(GREEN"Server : %s\n", response.msg);
     connect(sockfd, (struct sockaddr *)&server, len);
 
-    while (1) {
-        char buff[512] = {0};
-        scanf(NONE"%[^\n]s", buff);
-        getchar();
-        send(sockfd, buff, strlen(buff), 0);
-        recv(sockfd, buff, sizeof(buff), 0);
-        printf("Server : %s\n", buff);
-    }
+#ifndef _D
+    initfootball();
+#endif
 
+    pthread_create(&recv_t, NULL, client_recv, NULL);
+
+    signal(SIGALRM, send_ctl);
+    struct itimerval itimer;
+    itimer.it_interval.tv_sec = 0;
+    itimer.it_interval.tv_usec = 100000;
+    itimer.it_value.tv_sec = 0;
+    itimer.it_value.tv_usec = 100000;
+
+    setitimer(ITIMER_REAL, &itimer, NULL);
+
+    
+    while(1) {
+        int c = getchar();
+        switch(c) {
+            case 'a': {
+                ctl_msg.ctl.dirx -= 1;
+                break;
+            }
+            case 'd': {
+                ctl_msg.ctl.dirx += 1;
+                break;
+            }
+            case 'w': {
+                ctl_msg.ctl.diry -= 1;
+                break;
+            }
+            case 's': {
+                ctl_msg.ctl.diry += 1;
+                break;
+            }
+            case 13 : {
+                send_chat();
+                break;
+            }
+            case ' ': {
+                show_strength();
+                break;
+            }
+            case 'k': {
+                show_data_stream('k');
+                struct FootBallMsg msg;
+                bzero(&msg, sizeof(msg));
+                msg.type = FT_CTL;
+                msg.ctl.action = ACTION_KICK;
+                msg.ctl.strength = 1;
+                send(sockfd, (void*)&msg, sizeof(msg), 0);
+                break;
+            }
+            case 'j': {
+                show_data_stream('s');
+                struct FootBallMsg msg;
+                bzero(&msg, sizeof(msg));
+                msg.type = FT_CTL;
+                msg.ctl.action = ACTION_STOP;
+                send(sockfd, (void*)&msg, sizeof(msg), 0);
+                break;
+            }
+            case 'l': {
+                show_data_stream('l');
+                struct FootBallMsg msg;
+                bzero(&msg, sizeof(msg));
+                msg.type = FT_CTL;
+                msg.ctl.action = ACTION_CARRY;
+                break;
+            }
+            case 'n': {
+                show_name = show_name ? 0 : 1;             
+                break;
+            }
+            case 'q': {
+                logout(14);
+                break;
+            }
+            default : {
+                break;      
+            }
+            box(Write, 0, 0);
+            wrefresh(Write);
+
+
+        
+        }
+    
+    }
     return 0;
 }

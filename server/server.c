@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
                     sprintf(buff, "%s login the game", user.name);
                     Show_Message(Message, &user , buff, 1);
                     w_gotoxy_puts(Message, 0, 0, "New connection!\n");
-                    show_data_stream("l");
+                    show_data_stream('l');
                     add_to_sub_reactor(&user);
                 }       
             }                

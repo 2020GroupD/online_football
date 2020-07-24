@@ -25,7 +25,7 @@ void add_event_ptr(int epollfd, int fd, int events, struct User *user) {
     return ;
 }
 
-int check_online(struct LogRequest *request) {
+/*int check_online(struct LogRequest *request) {
     for (int i = 0; i < MAX; i++) {
         if (rteam[i].online == 1 && !strcmp(rteam[i].name, request->name)) return 1;
         if (bteam[i].online == 1 && !strcmp(bteam[i].name, request->name)) return 1;
@@ -33,7 +33,7 @@ int check_online(struct LogRequest *request) {
     return 0;
 };
 
-
+*/
 int udp_connect(struct sockaddr_in *server) {
     int sockfd = socket_create_udp(port);
 
@@ -49,7 +49,7 @@ int udp_connect(struct sockaddr_in *server) {
 
     return sockfd;
 }  
-
+/*
 int udp_accept(int fd, struct User *user) {
     int new_fd, ret;
     struct sockaddr_in client;
@@ -103,7 +103,7 @@ int udp_accept(int fd, struct User *user) {
 
     return new_fd;
 }
-
+*/
 void del_event(int epollfd, int fd) {
     close(fd);
     epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, NULL);
@@ -117,7 +117,7 @@ int find_sub(struct User *team) {
 	return -1;
 }
 
-
+/*
 void add_to_sub_reactor(struct User *user) {
 	struct User *team = (user->team ? bteam : rteam);
 	if (user->team) {
@@ -148,6 +148,6 @@ void add_to_sub_reactor(struct User *user) {
 		add_event_ptr(repollfd, team[sub].fd, EPOLLIN | EPOLLET, &team[sub]);
 	}
 }
-
+*/
 //老师这里好像没有unlock而且lock unlock两次都是blue队
 //syh 2020/7/21

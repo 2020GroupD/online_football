@@ -7,7 +7,7 @@
 
 #ifndef _HEAD_H
 #define _HEAD_H
-
+#include <locale.h>
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -53,10 +53,12 @@
 #include "server_send_all.h"
 #include "server_exit.h"
 #include "heart_beat.h"
-
+#include "show_data_stream.h"
+#include "show_strength.h"
+#include "client_recv.h"
 #define MAX         20
 #define NTHREAD     5
-#define TIME_INTERVAL   1000
+#define TIME_INTERVAL   10
 #define PI              3.1415926
 #define ACCELERATION    40
 #define KICK_TIME       0.2

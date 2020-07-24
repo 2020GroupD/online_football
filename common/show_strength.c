@@ -1,7 +1,7 @@
 #include "head.h"
 
-WINDOW *Write;
-int sockfd;
+extern WINDOW *Write;
+extern int sockfd;
 
 void show_strength() {
 	int maxx, maxy, strength;

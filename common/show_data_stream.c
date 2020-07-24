@@ -4,7 +4,7 @@ char data_stream[20];
 WINDOW *Help;
 struct Map court;
 
-void show_data_stream(char type) {
+void show_data_stream(int type) {
 	
 	for (int i = 17; i > 0; i--) {
 		data_stream[i + 1] = data_stream[i];
