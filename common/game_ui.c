@@ -6,6 +6,43 @@
  ************************************************************************/
 
 #include "head.h"
+extern int messsage_num;
+void Show_Message(WINDOW *win, struct User *user, char *msg, int type) {
+    time_t time_now = time(NULL);
+    struct tm* tm = localtime(&time_now);
+    char timestr[20] = {0};
+    char username[80] = {0};
+    sprintf(timestr, "%02d:%02d:%02d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    if (type) {
+        wattron(win, COLOR_PAIR(4));
+        strcpy(username, "Server Info : ");
+    } else {
+        if (user->team)
+            wattron(win, COLOR_PAIR(6));
+        else
+            wattron(win, COLOR_PAIR(2));
+        sprintf(username, "%s : ", user->name);
+    }
+
+    if (messsage_num <= 4) {
+        w_gotoxy_puts(win, 10, messsage_num, username);
+        wattron(win, COLOR_PAIR(3));
+        w_gotoxy_puts(win, 10 + strlen(username), messsage_num, msg);
+        wattron(win, COLOR_PAIR(5));
+        w_gotoxy_puts(win, 1, messsage_num, timestr);
+        messsage_num++;
+    } else {
+        messsage_num = 4;
+        scroll(win);
+        w_gotoxy_puts(win, 10, messsage_num, username);
+        wattron(win, COLOR_PAIR(3));
+        w_gotoxy_puts(win, 10 + strlen(username), messsage_num, msg);
+        wattron(win, COLOR_PAIR(5));
+        w_gotoxy_puts(win, 1, messsage_num, timestr);
+        messsage_num++;
+    }
+    wrefresh(win);
+}
 
 WINDOW *create_newwin(int width, int heigth, int startx, int starty) {
     WINDOW *win;

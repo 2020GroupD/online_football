@@ -1,5 +1,5 @@
 #include "head.h"
-int port=0, message_num=0;
+int port=0, messsage_num=0;
 char *conf = "./footballd.conf";
 int bepollfd, repollfd;
 char ans[512];
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     bzero(&client, sizeof(client));
     socklen_t len = sizeof(client);
 
-    Show_Message(,, "Waiting for login");
+    Show_Message(Message, NULL, "Waiting for login", 1);
 
     sigset_t origmask, sigmask;
     sigemptyset(&sigmask);
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
                 int new_fd = udp_accept(listener, &user);
                 if (new_fd > 0) {
                     sprintf(buff, "%s login the game", user.name);
-                    Show_Message(, , buff, 1);
+                    Show_Message(Message, &user , buff, 1);
                     w_gotoxy_puts(Message, 0, 0, "New connection!\n");
                     show_data_stream("l");
                     add_to_sub_reactor(&user);

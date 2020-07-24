@@ -13,6 +13,7 @@ extern WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;//窗体
 extern struct Bpoint ball;  //球的位置
 extern struct BallStatus ball_status;
 
+void Show_Message(WINDOW *win, struct User *user, char *msg, int type);
 WINDOW *create_newwin(int width, int heigth, int startx, int starty);
 void destroy_win(WINDOW *win);
 void gotoxy(int x, int y);
