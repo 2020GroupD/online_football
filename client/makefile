@@ -5,4 +5,4 @@ all : client.c ../common/common.c ../common/udp_epoll.c ../common/ball_status.c 
 		../common/game_ui.c  \
         ../common/show_data_stream.c ../common/show_strength.c \
         ../common/client_recv.c ../common/send_chat.c ../common/send_ctl.c \
-		-I ../common/ -lncurses -lpthread -lm
+		-I ../common/ -lncursesw -lpthread -lm

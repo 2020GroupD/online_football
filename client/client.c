@@ -174,17 +174,20 @@ int main(int argc, char **argv) {
                 break;
             }
             case 'k': {
-                show_data_stream('k');
+                Show_Message(Message, NULL, "kickkkkk\n", 1);
+    //            show_data_stream('k');
                 struct FootBallMsg msg;
                 bzero(&msg, sizeof(msg));
                 msg.type = FT_CTL;
                 msg.ctl.action = ACTION_KICK;
                 msg.ctl.strength = 1;
-                send(sockfd, (void*)&msg, sizeof(msg), 0);
+                int ret=send(sockfd, (void*)&msg, sizeof(msg), 0);
+//                if(ret == 0)exit(1);
                 break;
             }
             case 'j': {
-                show_data_stream('s');
+                Show_Message(Message, NULL, "stoppppp\n", 1);
+//                show_data_stream('s');
                 struct FootBallMsg msg;
                 bzero(&msg, sizeof(msg));
                 msg.type = FT_CTL;
@@ -193,7 +196,9 @@ int main(int argc, char **argv) {
                 break;
             }
             case 'l': {
-                show_data_stream('l');
+
+                Show_Message(Message, NULL, "carryyyyyy\n", 1);
+  //              show_data_stream('l');
                 struct FootBallMsg msg;
                 bzero(&msg, sizeof(msg));
                 msg.type = FT_CTL;
