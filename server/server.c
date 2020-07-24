@@ -33,6 +33,8 @@ int main(int argc, char **argv) {
     court.height=atoi(get_conf_value(conf,"LINES"));
     court.start.x=3;
     court.start.y=2;
+    ball.x = court.width / 2;
+    ball.y = court.height / 2;
     
     initfootball();
         
@@ -71,8 +73,7 @@ int main(int argc, char **argv) {
     if (epoll_ctl(epollfd, EPOLL_CTL_ADD, listener, &ev) < 0) {
         perror("epoll_ctl");
         exit(1);
-    }
-        
+    } 
     while (1) {
         int nfds = epoll_wait(epollfd, events, MAX, -1);
         if (nfds < 0) {
@@ -86,7 +87,7 @@ int main(int argc, char **argv) {
             if (events[i].data.fd == listener) {
                 int new_fd = udp_accept(listener, &user);
                 if (new_fd > 0) {
-                    printf("New Connection!\n");
+                    w_gotoxy_puts(Message, 0, 0, "New connection!\n");
                     //可用多线程，持续接受数据试试，如果需要的话，请参考我们上课写的程序
                     add_to_sub_reactor(&user);
                 }       

@@ -37,6 +37,7 @@
 #include <sys/epoll.h>
 #include <sys/shm.h>
 #include <ncurses.h>
+#include <math.h>
 
 #include "common.h"
 #include "datatype.h"
@@ -45,9 +46,20 @@
 #include "udp_epoll.h"
 #include "thread_pool.h"
 #include "color.h"
+#include "ball_status.h"
+#include "send_ctl.h"
+#include "send_chat.h"
+#include "server_re_draw.h"
+#include "server_send_all.h"
+#include "server_exit.h"
+#include "heart_beat.h"
 
 #define MAX         20
 #define NTHREAD     5
+#define TIME_INTERVAL   1000
+#define PI              3.1415926
+#define ACCELERATION    40
+#define KICK_TIME       0.2
 
 #ifdef _D
 #define DBG(fmt, args...) printf(fmt, ##args)

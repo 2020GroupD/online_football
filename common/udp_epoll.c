@@ -5,6 +5,13 @@
 
 #include "head.h"
 
+extern int port;
+extern struct User *bteam, *rteam;
+extern pthread_mutex_t bmutex, rmutex;
+extern int bepollfd, repollfd;
+extern WINDOW *Message, *Football_t;
+extern struct Map court;
+
 void add_event_ptr(int epollfd, int fd, int events, struct User *user) {
     struct epoll_event ev;
     //调用epoll_ctf将fd加入到epollfd中
@@ -34,8 +41,8 @@ int udp_connect(struct sockaddr_in *server) {
         perror("udp_connect_socket_create_udp()");
         return -1;
     }
-
-    if (connect(sockfd, (struct sockaddr *)&server, sizeof(*server)) < 0) {
+    
+    if (connect(sockfd, (struct sockaddr *)server, sizeof(struct sockaddr_in)) < 0) {
         perror("udp_connect()");
         return -1;
     }
@@ -56,7 +63,7 @@ int udp_accept(int fd, struct User *user) {
 
     ret = recvfrom(fd, (void *)&request, sizeof(request), 0, (struct sockaddr *)&client, &len);
     
-    if (ret != sizeof(response)) {
+    if (ret != sizeof(request)) {
         response.type = 1;
         char *msg = "Login failed with Data errors";
         strcpy(response.msg, msg);
@@ -76,6 +83,14 @@ int udp_accept(int fd, struct User *user) {
     if (new_fd < 0) {
         return -1;
     }
+
+    w_gotoxy_puts(Message, 0, 1, "client:");
+    w_gotoxy_puts(Message, 8, 1, inet_ntoa(client.sin_addr)); 
+    w_gotoxy_puts(Message, 0, 2, "team  :");
+    if (request.team) 
+        w_gotoxy_puts(Message, 8, 2, "blue");
+    else
+        w_gotoxy_puts(Message, 8, 2, "red");
     
     strcpy(user->name, request.name);
     user->team = request.team;
@@ -115,7 +130,11 @@ void add_to_sub_reactor(struct User *user) {
 	team[sub] = *user;
 	team[sub].online = 1;
 	team[sub].flag = 10;    //10为默认设置
-	
+    srand(time(NULL));
+    team[sub].loc.x = rand() % court.width;
+    team[sub].loc.y = rand() % court.height;
+    re_draw_player(team[sub].team, team[sub].name, &team[sub].loc);
+        
 	if (user->team) {
 		pthread_mutex_unlock(&bmutex);
 	} else {
