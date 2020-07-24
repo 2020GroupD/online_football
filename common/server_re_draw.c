@@ -16,8 +16,8 @@ extern struct Map court;
 void re_draw_ball() {
     double vx = ball_status.v.x, vy = ball_status.v.y;
     double ax = ball_status.a.x, ay = ball_status.a.y;
-    ball.x = ball.x + vx * TIME_INTERVAL + ax * TIME_INTERVAL * TIME_INTERVAL;
-    ball.y = ball.y + vy * TIME_INTERVAL + ay * TIME_INTERVAL * TIME_INTERVAL;
+    ball.x = ball.x + vx * TIME_INTERVAL + ax * TIME_INTERVAL * TIME_INTERVAL / 2;
+    ball.y = ball.y + vy * TIME_INTERVAL + ay * TIME_INTERVAL * TIME_INTERVAL / 2;
     
     int flag_out = 0;
     if (ball.x == 0) {
