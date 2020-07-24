@@ -1,13 +1,28 @@
 #include "head.h"
 
 void do_with(struct User *user) {
-    char buff[512] = {0};
-    recv(user->fd, buff, sizeof(buff), 0);
-    printf("recv : %s\n", buff);
-    send(user->fd, buff, strlen(buff),0);
-    bzero(buff, sizeof(buff));
-}
+    struct FootBallMsg msg;
+    recv(user->fd, (void*)&msg, sizeof(msg), 0);
+    if(msg.type & FT_FIN) {
+    
+    }else if(msg.type & FT_MSG){  
+    
+    }else if(msg.type & FT_WALL){
 
+    }else if(msg.type & FT_ACK){
+    
+    }else if(msg.type & FT_CTL){/*
+        if(msg.ctl.action & ACTION_DFL) {
+            user->loc.x += msg.ctl.dirx;
+            user->loc.y += msg.ctl.diry;
+        } else if(msg.ctl.action && ACTION_KICK) {
+            //KICK
+        
+        }*/
+    }
+
+
+}
 void task_queue_init(struct task_queue *taskQueue, int size, int epollfd) {
 	taskQueue->size = size;
 	taskQueue->epollfd = epollfd;
@@ -18,7 +33,6 @@ void task_queue_init(struct task_queue *taskQueue, int size, int epollfd) {
 	pthread_cond_init(&taskQueue->cond, NULL);
 
 }
-
 void task_queue_push(struct task_queue *taskQueue, struct User *user) {
 	pthread_mutex_lock(&taskQueue->mutex);
 	if (taskQueue->total == taskQueue->size) {

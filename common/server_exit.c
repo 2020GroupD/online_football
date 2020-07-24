@@ -13,7 +13,8 @@ extern struct User *rteam, *bteam;
 void server_exit(int signum) {
 
     struct FootBallMsg msg;
-
+    bzero(&msg,sizeof(msg));
+    DBG(RED"Server is going to exit!\n"NONE);
     msg.type = FT_FIN;
 
     for (int i = 0; i < MAX; i++ ) {
@@ -23,6 +24,7 @@ void server_exit(int signum) {
     }
 
     endwin();
+    DBG(RED"Server stopped!\n"NONE);
 
     exit(0);
 

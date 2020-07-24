@@ -22,8 +22,12 @@ void heart_beat_team(struct User *team) {
 		}
 	}
 	for(int i = 0; i < MAX; i++){
-		if(team[i].flag == 0) {
+		if(team[i].flag <= 0) {
 			team[i].online = 0;
+            char tmp[512] = {0};
+            sprintf(tmp, "%s is removed from list", team[i].name);
+            DBG(RED"%s\n"NONE, tmp);
+//            Show_Message(, NULL, tmp, 1);
 			if(team[i].team == 1){
 				del_event(bepollfd, team[i].fd);
 			}
